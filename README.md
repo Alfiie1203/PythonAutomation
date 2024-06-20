@@ -1,6 +1,3 @@
-Con la información proporcionada, puedo crear un archivo `README.txt` para tu proyecto. Aquí tienes el contenido sugerido:
-
-```
 # PythonAutomation
 
 ## Descripción general
@@ -15,9 +12,9 @@ PythonAutomation es una aplicación que toma datos de un archivo de Excel y conv
 2. Asegúrate de tener Python instalado. Puedes descargarlo desde [python.org](https://www.python.org/).
 3. Navega a la carpeta del proyecto donde se encuentra `app.py` y `requirements.txt`.
 4. Instala las dependencias usando el siguiente comando:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 
 ## Configuración inicial
 Antes de ejecutar la aplicación, configura las rutas de las carpetas a usar en `app.py` y en los archivos de los bots (`bot247.py`, `bot_i129s.py` y `read_excels.py`) según tu entorno local.
