@@ -38,21 +38,17 @@ python app.py
 ## Estructura del proyecto
 ```
 PYTHONAUTOMATION
-├── __pycache__
 │
 ├── Bot_247
-│   ├── __pycache__
 │   └── bot247.py
 │
 ├── Bot_i129s
-│   ├── __pycache__
 │   ├── bot_i129s.py
 │   └── read_excels.py
 │
 ├── templates
 │   └── index.html
 │
-├── ToolBook
 ├── app.bat
 ├── app.py
 └── requirements.txt
@@ -65,18 +61,3 @@ PYTHONAUTOMATION
 - **Bot_i129s/bot_i129s.py**: Contiene la lógica para generar PDFs del modelo i129s.
 - **Bot_i129s/read_excels.py**: Contiene la lógica para generar el archivo Excel necesario para el bot i129s.
 - **templates/index.html**: Plantilla HTML para la interfaz de usuario.
-
-## Contribuciones
-Las contribuciones son bienvenidas. Si deseas contribuir, por favor sigue los siguientes pasos:
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
-3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva funcionalidad'`).
-4. Empuja tus cambios a la rama (`git push origin feature/nueva-funcionalidad`).
-5. Crea un Pull Request.
-
-## Licencia
-Este proyecto no tiene una licencia específica.
-
-```
-
-Este archivo README.txt debería proporcionar a los usuarios una guía clara sobre cómo configurar, instalar y usar tu aplicación PythonAutomation. Si tienes alguna otra información que desees agregar, no dudes en decírmelo.
