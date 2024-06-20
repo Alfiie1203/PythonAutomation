@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Generator Control</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(0, 0, 0);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .square {
+            position: absolute;
+            border: 2px solid rgb(13, 119, 101);
+            opacity: 0.5;
+            animation: move 20s infinite linear;
+        }
+        @keyframes move {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(calc(100vh - 50px)) translateX(calc(100vw - 50px));
+            }
+            50% {
+                transform: translateY(calc(100vh - 50px)) translateX(0);
+            }
+            75% {
+                transform: translateY(0) translateX(calc(100vw - 50px));
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+        .table-container {
+            background-color: #fff;
+            color: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 1;
+            width: 60%;
+            max-width: 600px;
+        }
+        h1 {
+            color: rgb(0, 0, 0);
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            background-color: rgb(29, 218, 188);
+            color: #fff;
+            border: none;
+            padding: 7px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 5px;
+        }
+        .btn-custom:hover {
+            background-color: rgb(24, 178, 154);
+        }
+        .btn-stop {
+            background-color: rgb(255, 60, 60);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn-stop:hover {
+            background-color: rgb(204, 48, 48);
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 90%;
+            margin-bottom: 20px;
+        }
+        .table {
+            width: 100%;
+            text-align: left;
+        }
+        .table th, .table td {
+            padding: 10px;
+        }
+        
+        .progress {
+            height: 30px;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            background-color: rgb(29, 218, 188);
+        }
+
+        .popup-container, .loading-popup-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .popup, .loading-popup {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #000;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .popup .btn-stop {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="square" style="width: 50px; height: 50px; top: 10%; left: 20%;"></div>
+        <div class="square" style="width: 50px; height: 50px; top: 70%; left: 80%;"></div>
+        <div class="square" style="width: 50px; height: 50px; top: 50%; left: 50%;"></div>
+        <div class="square" style="width: 50px; height: 50px; top: 20%; left: 70%;"></div>
+    </div>
+    <div class="table-container">
+        <img src="https://ihrmeeting.com/wp-content/uploads/2022/01/Vialto.png" alt="Logo" class="logo">
+        <h1>RPA - BOT DashBoard</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Proceso</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Bot_Model_247</td>
+                    <td>
+                        <form action="{{ url_for('start_bot247') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
+                            <button type="submit" class="btn btn-custom">Start</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Bot_Model_i129s</td>
+                    <td>
+                        <form action="{{ url_for('start_i129s') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
+                            <button type="submit" class="btn btn-custom">Start</button>
+                        </form>
+                        <form action="{{ url_for('start_excel_i129s') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
+                            <button type="submit" class="btn btn-info">Cargar Excel</button>
+                        </form>
+                        
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="popup-container" id="popup-container">
+        <div class="popup">
+            <p>¿Está seguro de que desea continuar?</p>
+            <button class="btn btn-custom" onclick="confirmAction()">Sí</button>
+            <button class="btn btn-danger" onclick="cancelAction()">No</button>
+        </div>
+    </div>
+    <div class="loading-popup-container" id="loading-popup-container">
+        <div class="loading-popup">
+            <p>Procesando...</p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        let formToSubmit = null;
+
+        function confirmAndShowLoadingBar(event) {
+            event.preventDefault();
+            formToSubmit = event.target;
+            document.getElementById('popup-container').style.display = 'flex';
+            return false;
+        }
+
+        function confirmAction() {
+            document.getElementById('popup-container').style.display = 'none';
+            document.getElementById('loading-popup-container').style.display = 'flex';
+            showLoadingBar();
+            formToSubmit.submit();
+        }
+
+        function cancelAction() {
+            document.getElementById('popup-container').style.display = 'none';
+        }
+
+        function showLoadingBar() {
+            var progressBar = document.querySelector('.progress-bar');
+            var width = 0;
+            var interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width++;
+                    progressBar.style.width = width + '%';
+                    progressBar.setAttribute('aria-valuenow', width);
+                }
+            }, 100);
+        }
+    </script> 
+</body>
+</html>
