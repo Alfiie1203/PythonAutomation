@@ -59,7 +59,7 @@
             text-align: center;
             z-index: 1;
             width: 60%;
-            max-width: 600px;
+            max-width: 80%%;
         }
         h1 {
             color: rgb(0, 0, 0);
@@ -106,16 +106,13 @@
         .table th, .table td {
             padding: 10px;
         }
-        
         .progress {
             height: 30px;
             margin-top: 20px;
         }
-
         .progress-bar {
             background-color: rgb(29, 218, 188);
         }
-
         .popup-container, .loading-popup-container {
             position: fixed;
             top: 0;
@@ -128,7 +125,6 @@
             align-items: center;
             z-index: 10;
         }
-
         .popup, .loading-popup {
             background: #fff;
             padding: 20px;
@@ -138,7 +134,6 @@
             width: 80%;
             max-width: 500px;
         }
-
         .popup .btn-stop {
             margin-top: 20px;
         }
@@ -153,7 +148,7 @@
     </div>
     <div class="table-container">
         <img src="https://ihrmeeting.com/wp-content/uploads/2022/01/Vialto.png" alt="Logo" class="logo">
-        <h1>RPA - BOT DashBoard</h1>
+        <h1>RPA - BOT Dashboard</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -181,12 +176,17 @@
                     <td>Bot_Model_i129s</td>
                     <td>
                         <form action="{{ url_for('start_i129s') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
-                            <button type="submit" class="btn btn-custom">Start</button>
+                            <button type="submit" class="btn btn-custom">Generate PDFs</button>
                         </form>
                         <form action="{{ url_for('start_excel_i129s') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
-                            <button type="submit" class="btn btn-info">Cargar Excel</button>
+                            <button type="submit" class="btn btn-info">Generate Excel Now</button>
                         </form>
-                        
+                        <form action="{{ url_for('start_bot') }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-custom">Start Bot Generate Excel</button>
+                        </form>
+                        <form action="{{ url_for('stop_bot') }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-stop">Stop Bot Generate Excel</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>

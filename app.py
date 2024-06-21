@@ -60,5 +60,27 @@ def start_excel_i129s():
         flash('An error occurred while generating the Excel file', 'danger')
     return redirect(url_for('index'))
 
+
+@app.route('/start_bot_generateExcel_i129s', methods=['POST'])
+def start_bot():
+    try:
+        read_excels.start_bot()
+        flash('Bot started successfully', 'success')
+    except Exception as e:
+        logging.error(f"Error in start_bot: {e}")
+        flash('An error occurred while starting the bot', 'danger')
+    return redirect(url_for('index'))
+
+
+@app.route('/stop_bot_generateExcel_i129s', methods=['POST'])
+def stop_bot():
+    try:
+        read_excels.stop_bot()
+        flash('Bot stopped successfully', 'success')
+    except Exception as e:
+        logging.error(f"Error in stop_bot: {e}")
+        flash('An error occurred while stopping the bot', 'danger')
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run(debug=True)

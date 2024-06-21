@@ -2,9 +2,16 @@ import pandas as pd
 import os
 import difflib
 import shutil
+import threading
+import time
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.worksheet.datavalidation import DataValidation
+
+
+bot_running = False
+bot_thread = None
+
 
 def diccionario():
     df = pd.read_excel("G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/diccionario.xlsx")
@@ -313,4 +320,28 @@ def generateExcel():
         if archivo.endswith('.xlsx'):
             shutil.move(os.path.join(carpeta, archivo), os.path.join(carpeta_procesados, archivo))
 
-#generateExcel()
+
+def process_files():
+    global bot_running
+    while bot_running:
+        if any(file.endswith('.xlsx') for file in os.listdir('G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/Casos/')):
+            generateExcel()
+        time.sleep(60)  # Esperar 1 minuto antes de volver a comprobar
+
+def start_bot():
+    global bot_running, bot_thread
+    if not bot_running:
+        bot_running = True
+        bot_thread = threading.Thread(target=process_files)
+        bot_thread.start()
+
+def stop_bot():
+    global bot_running, bot_thread
+    if bot_running:
+        bot_running = False
+        if bot_thread:
+            bot_thread.join()
+            bot_thread = None
+            
+            
+#start_bot()
