@@ -175,17 +175,18 @@
                 <tr>
                     <td>Bot_Model_i129s</td>
                     <td>
+                        <!--
                         <form action="{{ url_for('start_i129s') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
                             <button type="submit" class="btn btn-custom">Generate PDFs</button>
                         </form>
                         <form action="{{ url_for('start_excel_i129s') }}" method="post" style="display: inline;" onsubmit="return confirmAndShowLoadingBar(event)">
                             <button type="submit" class="btn btn-info">Generate Excel Now</button>
-                        </form>
+                        </form>-->
                         <form action="{{ url_for('start_bot') }}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-custom">Start Bot Generate Excel</button>
                         </form>
                         <form action="{{ url_for('stop_bot') }}" method="post" style="display: inline;">
-                            <button type="submit" class="btn btn-stop">Stop Bot Generate Excel</button>
+                            <button type="submit" class="btn btn-stop">Stop Bot Generate Excel </button>
                         </form>
                     </td>
                 </tr>

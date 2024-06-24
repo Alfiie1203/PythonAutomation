@@ -4,10 +4,18 @@ from reportlab.lib import utils
 from reportlab.pdfgen import canvas
 import pandas as pd
 import openpyxl
+import threading
+import time
 from openpyxl.styles import PatternFill
 import win32com.client as win32 
 
-output_folder = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/pdfs_generados'
+bot_running = False
+bot_thread = None
+
+ruta_base = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/'
+templates = ruta_base+'templates/'
+
+output_folder = ruta_base+'pdfs_generados'
 
 # Crear el directorio si no existe
 if not os.path.exists(output_folder):
@@ -24,9 +32,7 @@ def adjust_text_and_font_size(text, threshold_small=24, threshold_large=50,
         return text, small_font_size, +1
     else:
         return text, medium_font_size, 0
-    
-
-    
+     
 def color_cells(workbook, sheet_name):
     ws = workbook[sheet_name]
     red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
@@ -36,8 +42,6 @@ def color_cells(workbook, sheet_name):
             if cell.row > 1 and not cell.value:  # Verifica si la celda está vacía
                 cell.fill = red_fill
                 
-
-
 def add_text_to_image(canvas_obj, image_path, text_data):
     # Cargar la imagen
     img = utils.ImageReader(image_path)
@@ -330,7 +334,35 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
     color_cells(workbook, 'Temp')
     workbook.save(excel_file)
         
+def process_files():
+    global bot_running
+    while bot_running:
+        excel_file = ruta_base+'datos.xlsx'
+        image_paths = [templates+'page_1.jpg', 
+                       templates+'page_2.jpg',
+                       templates+'page_3.jpg',
+                       templates+'page_4.jpg',
+                       templates+'page_5.jpg',
+                       templates+'page_6.jpg',
+                       templates+'page_7.jpg',
+                       templates+'page_8.jpg']
+        generate_pdfs_from_excel(excel_file, image_paths, output_folder)
+        time.sleep(300)  # Esperar 1 minuto antes de volver a comprobar
 
+def start_bot():
+    global bot_running, bot_thread
+    if not bot_running:
+        bot_running = True
+        bot_thread = threading.Thread(target=process_files)
+        bot_thread.start()
+
+def stop_bot():
+    global bot_running, bot_thread
+    if bot_running:
+        bot_running = False
+        if bot_thread:
+            bot_thread.join()
+            bot_thread = None
 
 #excel_file = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/datos.xlsx'
 #image_paths = ['G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_1.jpg', 

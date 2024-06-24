@@ -326,7 +326,7 @@ def process_files():
     while bot_running:
         if any(file.endswith('.xlsx') for file in os.listdir('G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/Casos/')):
             generateExcel()
-        time.sleep(60)  # Esperar 1 minuto antes de volver a comprobar
+        time.sleep(10)  # Esperar 1 minuto antes de volver a comprobar
 
 def start_bot():
     global bot_running, bot_thread

@@ -8,6 +8,14 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Add a secret key for session management
 logging.basicConfig(level=logging.INFO)
 
+RPA = 'G:/Shared drives/ES VIALTO GMS - RPA/'
+TAX_247 = RPA+'TAX/COMPLIANCE/247/'
+TAX_Templates= TAX_247+'templates/'
+
+INMI = 'TAX/COMPLIANCE/i_129s/'
+INMI_I129S= INMI+'TAX/COMPLIANCE/i_129s/'
+INMI_Templates=INMI_I129S+'templates/'
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -15,12 +23,12 @@ def index():
 @app.route('/start_bot247', methods=['POST'])
 def start_bot247():
     try:
-        bot247_excel_file = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/247/datos.xlsx'
+        bot247_excel_file = TAX_247+'datos.xlsx'
         bot247_image_paths = [
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/247/templates/page_1.png', 
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/247/templates/page_2.png'
+            TAX_Templates+'page_1.png', 
+            TAX_Templates+'page_2.png'
         ]
-        bot247_output_folder = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/247/pdfs_generados'
+        bot247_output_folder = TAX_247+'pdfs_generados'
         bot247.generate_pdfs_from_excel(bot247_excel_file, bot247_image_paths, bot247_output_folder)
         flash('Bot 247 completed successfully', 'success')
     except Exception as e:
@@ -31,18 +39,18 @@ def start_bot247():
 @app.route('/start_i129s', methods=['POST'])
 def start_i129s():
     try:
-        bot_i129s_excel_file = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/datos.xlsx'
+        bot_i129s_excel_file = INMI_I129S+'datos.xlsx'
         bot_i129s_image_paths = [
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_1.jpg', 
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_2.jpg',
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_3.jpg',
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_4.jpg',
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_5.jpg',
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_6.jpg',
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_7.jpg',
-            'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_8.jpg'
+            INMI_Templates+'page_1.jpg', 
+            INMI_Templates+'page_2.jpg',
+            INMI_Templates+'page_3.jpg',
+            INMI_Templates+'page_4.jpg',
+            INMI_Templates+'page_5.jpg',
+            INMI_Templates+'page_6.jpg',
+            INMI_Templates+'page_7.jpg',
+            INMI_Templates+'page_8.jpg'
         ]
-        bot_i129s_output_folder = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/pdfs_generados'
+        bot_i129s_output_folder = INMI_I129S+'pdfs_generados'
         bot_i129s.generate_pdfs_from_excel(bot_i129s_excel_file, bot_i129s_image_paths, bot_i129s_output_folder)
         flash('Bot i129s completed successfully', 'success')
     except Exception as e:
@@ -65,6 +73,7 @@ def start_excel_i129s():
 def start_bot():
     try:
         read_excels.start_bot()
+        bot_i129s.start_bot()
         flash('Bot started successfully', 'success')
     except Exception as e:
         logging.error(f"Error in start_bot: {e}")
@@ -76,6 +85,7 @@ def start_bot():
 def stop_bot():
     try:
         read_excels.stop_bot()
+        bot_i129s.stop_bot()
         flash('Bot stopped successfully', 'success')
     except Exception as e:
         logging.error(f"Error in stop_bot: {e}")
