@@ -7,7 +7,7 @@ import openpyxl
 import threading
 import time
 from openpyxl.styles import PatternFill
-import win32com.client as win32 
+import win32com.client as win32
 
 bot_running = False
 bot_thread = None
