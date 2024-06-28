@@ -1,7 +1,7 @@
 #pip install -r requirements.txt
 from flask import Flask, render_template, request, redirect, url_for, flash
 from Bot_247 import bot247
-from Bot_i129s import read_excels, bot_i129s
+from Bot_i129s import read_excels, bot_i129s, generate_ExcelKey
 import logging
 
 app = Flask(__name__)

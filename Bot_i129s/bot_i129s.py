@@ -8,14 +8,16 @@ import threading
 import time
 from openpyxl.styles import PatternFill
 import win32com.client as win32
+from Bot_i129s import generate_ExcelKey
 
 bot_running = False
 bot_thread = None
 
-ruta_base = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/'
+ruta_base_user = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/FORM i129S/USERS/'
+ruta_base = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/FORM i129S/BOT - DO NOT TOUCH/'
 templates = ruta_base+'templates/'
 
-output_folder = ruta_base+'pdfs_generados'
+output_folder = ruta_base_user+'pdfs_generados'
 
 # Crear el directorio si no existe
 if not os.path.exists(output_folder):
@@ -136,7 +138,7 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
         missing_fields = [field for field in required_fields if pd.isna(row[field]) or row[field] == '']
         
         if missing_fields:
-            print(f"\n The line that corresponds to the company {str(row['Name of the Petitioning Organization'])} and the user {str(row['Middle Name'])} {str(row['Family Name (Last Name)'])}, {str(row['Given Name (First Name)'])} which was located in the line: {index + 1} was omitted due to missing fields: \n {missing_fields} \n \n")
+            #print(f"\n The line that corresponds to the company {str(row['Name of the Petitioning Organization'])} and the user {str(row['Middle Name'])} {str(row['Family Name (Last Name)'])}, {str(row['Given Name (First Name)'])} which was located in the line: {index + 1} was omitted due to missing fields: \n {missing_fields} \n \n")
             continue
         
         # Nombre del archivo PDF de salida
@@ -234,9 +236,9 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
 
         ]
         
-        if(str(row['Gender']) == "Male"):  
+        if(str(row['Gender']) == "MALE"):  
             texto_data_hoja3.append({"text": "X", "x": 387, "y": 678})
-        elif(str(row['Gender']) == "Female"):
+        elif(str(row['Gender']) == "FEMALE"):
             texto_data_hoja3.append({"text": "X", "x": 442, "y": 678})
         
         texto_data_hoja4 = [
@@ -337,7 +339,7 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
 def process_files():
     global bot_running
     while bot_running:
-        excel_file = ruta_base+'datos.xlsx'
+        excel_file = ruta_base+'INPUT USERS DATA FORM I-129S.xlsx'
         image_paths = [templates+'page_1.jpg', 
                        templates+'page_2.jpg',
                        templates+'page_3.jpg',
@@ -346,6 +348,8 @@ def process_files():
                        templates+'page_6.jpg',
                        templates+'page_7.jpg',
                        templates+'page_8.jpg']
+        
+        generate_ExcelKey.generateExcelKey()
         generate_pdfs_from_excel(excel_file, image_paths, output_folder)
         time.sleep(300)  # Esperar 1 minuto antes de volver a comprobar
 
@@ -364,7 +368,7 @@ def stop_bot():
             bot_thread.join()
             bot_thread = None
 
-#excel_file = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/datos.xlsx'
+#excel_file = ruta_base+'INPUT USERS DATA FORM I-129S.xlsx'
 #image_paths = ['G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_1.jpg', 
 #               'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_2.jpg',
 #               'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_3.jpg',
@@ -374,5 +378,4 @@ def stop_bot():
 #               'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_7.jpg',
 #               'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_8.jpg']
 #
-#output_folder = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/pdfs_generados'
 #generate_pdfs_from_excel(excel_file, image_paths, output_folder)

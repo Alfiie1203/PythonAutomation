@@ -4,6 +4,7 @@ import difflib
 import shutil
 import threading
 import time
+from datetime import datetime
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill, Font, Alignment
 from openpyxl.worksheet.datavalidation import DataValidation
@@ -11,10 +12,14 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 bot_running = False
 bot_thread = None
-
+ruta_base = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/FORM i129S/'
+ruta_user = ruta_base+'USERS/'
+ruta_admin = ruta_base+'BOT - DO NOT TOUCH/'
+ruta_out = ruta_admin+'IN FASE 1 (d60 to excels)/'
+templates = ruta_base+'BOT - DO NOT TOUCH/templates/'
 
 def diccionario():
-    df = pd.read_excel("G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/diccionario.xlsx")
+    df = pd.read_excel(ruta_admin+"Companies.xlsx")
     return df
 
 def preprocess_string(s):
@@ -108,7 +113,7 @@ def fill_data(df):
             new_df.at[index, "Preparer's Daytime Telephone Number"] = matched_row["Preparer's Daytime Telephone Number"]
             new_df.at[index, "Preparer's Email Address (if any)"] = matched_row["Preparer's Email Address (if any)"]
         else:
-            print(f"No match found for '{row['Name of the Petitioning Organization']}'")
+            print(f"No match found in the folder")
 
     return new_df
 
@@ -177,65 +182,56 @@ def add_dropdown(ws, col_letter, options):
     dv.add(f"{col_letter}2:{col_letter}{ws.max_row}")
 
 def generateExcel():
-    carpeta = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/Casos/'
+    carpeta = ruta_user+'/Casos/'
     datos_a_obtener = {
-        "Name of the Petitioning Organization":1,
-        "In Care Of Name (if any) last":1,
-        "In Care Of Name (if any) first":1,
+        "Name of the Petitioning Organization": 1,
+        "In Care Of Name (if any) last": 1,
+        "In Care Of Name (if any) first": 1,
         "U.S. Street address": 1,
         "City_Petitioner": 1,
         "State_Petitioner": 1,
         "Zip Code_Petitioner": 1,
-        "Is this mailing address the same as the physical location of the sponsoring company or organization?":1,
-        "Daytime Telephone Number":1,
-        "Email Address (if any)":1,
-        "Website Address (if any)":1,
-        "Does the petitioner employ 50 or more individuals in the United States?":1,
-        "Are more than 50 percent of the petitioner's employees in H-1B, L-1A, or L-1B nonimmigrant status?":1,
-        
-        "The beneficiary will work as a:":1,
-        
-        "startdate_proposed_employment":1, #
-        "enddate_proposed_employment":1, #
-        "Was the beneficiary of this petition in the United States during the last seven years?":1, #
-        
-        "Family Name (Last Name)":3,
-        "Given Name (First Name)":4,
-        "Middle Name":4,
-        "Street Number and Name or Po Box":85,
-        "City_Beneficiary":86,
-        "Province_Beneficiary":87,
-        "PostalCode_Beneficiary":88,
-        "Country_Beneficiary":89,
-        "Date of Birth":10,
-        "Gender":7,
-        "City of birth":11,
-        "State of birth":12,
-        "Country of birth":13,
-        
-        "Country of Citizenship or Nationality":1, #
-        "Number for the Blanket":1, #Dic
-        "Beneficiary's Wages Per Year":1, #
-        "Beneficiary's Hours Per Week":1, #Dic
-        
-        "Job Title":1, #
-        "Indicate the type of qualifying position the beneficiary was employed in while working for the qualifying foreign employer":1, #
-        
-        
-        "foreign Employer Name":176,
-        "Street Address Mailing Address":178,
-        "City Mailing Address":179,
-        "Province Mailing Address":180,
-        "Postal Code Mailing Address":181,
-        "Country Mailing Address":183,
-        "Job Title_Act":175,
-        "Start Date":184,
-        
-        "Wages Earned Per Year":1, #
-        "Hours Worked Per Week":1, #
-        
-        "With respect to the technology or technical data the petitioner will release or otherwise provide access to the beneficiary, the petitioner certifies that it has reviewed the Export Administration Regulations (EAR) and the International Traffic in Arms Regulations (ITAR) and has determined that:":1, #Dic
-        "Petitioner's or Authorized Signatory's Title":1,
+        "Is this mailing address the same as the physical location of the sponsoring company or organization?": 1,
+        "Daytime Telephone Number": 1,
+        "Email Address (if any)": 1,
+        "Website Address (if any)": 1,
+        "Does the petitioner employ 50 or more individuals in the United States?": 1,
+        "Are more than 50 percent of the petitioner's employees in H-1B, L-1A, or L-1B nonimmigrant status?": 1,
+        "The beneficiary will work as a:": 1,
+        "startdate_proposed_employment": 1, #
+        "enddate_proposed_employment": 1, #
+        "Was the beneficiary of this petition in the United States during the last seven years?": 1, #
+        "Family Name (Last Name)": 3,
+        "Given Name (First Name)": 4,
+        "Middle Name": 4,
+        "Street Number and Name or Po Box": 85,
+        "City_Beneficiary": 86,
+        "Province_Beneficiary": 87,
+        "PostalCode_Beneficiary": 88,
+        "Country_Beneficiary": 89,
+        "Date of Birth": 10,
+        "Gender": 7,
+        "City of birth": 11,
+        "State of birth": 12,
+        "Country of birth": 13,
+        "Country of Citizenship or Nationality": 1, #
+        "Number for the Blanket": 1, #Dic
+        "Beneficiary's Wages Per Year": 1, #
+        "Beneficiary's Hours Per Week": 1, #Dic
+        "Job Title": 1, #
+        "Indicate the type of qualifying position the beneficiary was employed in while working for the qualifying foreign employer": 1, #
+        "foreign Employer Name": 176,
+        "Street Address Mailing Address": 178,
+        "City Mailing Address": 179,
+        "Province Mailing Address": 180,
+        "Postal Code Mailing Address": 181,
+        "Country Mailing Address": 183,
+        "Job Title_Act": 175,
+        "Start Date": 184,
+        "Wages Earned Per Year": 1, #
+        "Hours Worked Per Week": 1, #
+        "With respect to the technology or technical data the petitioner will release or otherwise provide access to the beneficiary, the petitioner certifies that it has reviewed the Export Administration Regulations (EAR) and the International Traffic in Arms Regulations (ITAR) and has determined that:": 1, #Dic
+        "Petitioner's or Authorized Signatory's Title": 1,
     }
 
     datos = []
@@ -265,21 +261,13 @@ def generateExcel():
     df_final = pd.DataFrame(datos)
     nuevo_dataframe = fill_data(df_final)
 
-    # Cargar la hoja Log del archivo original
-    log_file_path = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/datos.xlsx'
-    output_path = log_file_path
-
-    # Verificar si el archivo ya existe y cargar la hoja 'Temp' si existe
-    if os.path.exists(log_file_path):
-        existing_df = pd.read_excel(log_file_path, sheet_name='Temp')
-        nuevo_dataframe = pd.concat([existing_df, nuevo_dataframe], ignore_index=True)
-
-    log_df = pd.read_excel(log_file_path, sheet_name='Log')
+    # Generar un nombre de archivo basado en la fecha y hora actual
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = ruta_out + f'INPUT_USERS_DATA_FORM_I-129S_{timestamp}.xlsx'
 
     # Crear un archivo Excel con ambas hojas
     with pd.ExcelWriter(output_path) as writer:
         nuevo_dataframe.to_excel(writer, sheet_name='Temp', index=False)
-        log_df.to_excel(writer, sheet_name='Log', index=False)
 
     # Color cells in the 'Temp' sheet
     wb = load_workbook(output_path)
@@ -309,22 +297,18 @@ def generateExcel():
     add_dropdown(ws, 'Q', ['YES', 'NO'])
     add_dropdown(ws, 'Q', ['Manager', 'Executive', 'Specialized Knowledge Professional'])
     
-
-
-    
     wb.save(output_path)
     
     # Mover archivos procesados a la carpeta /Casos/Procesados
-    carpeta_procesados = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/Casos/Procesados'
+    carpeta_procesados = ruta_user+'Casos/Procesados'
     for archivo in os.listdir(carpeta):
         if archivo.endswith('.xlsx'):
             shutil.move(os.path.join(carpeta, archivo), os.path.join(carpeta_procesados, archivo))
 
-
 def process_files():
     global bot_running
     while bot_running:
-        if any(file.endswith('.xlsx') for file in os.listdir('G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/Casos/')):
+        if any(file.endswith('.xlsx') for file in os.listdir(ruta_user+'Casos/')):
             generateExcel()
         time.sleep(10)  # Esperar 1 minuto antes de volver a comprobar
 
