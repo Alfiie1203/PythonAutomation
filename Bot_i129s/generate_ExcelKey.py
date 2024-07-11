@@ -52,6 +52,5 @@ def generateExcelKey():
     with pd.ExcelWriter(archivo_actualizar, engine='openpyxl', mode='a') as writer:
         df_actualizado.to_excel(writer, sheet_name='Temp', index=False)
 
-    print("Actualización completada.")
     
     

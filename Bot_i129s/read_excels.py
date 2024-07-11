@@ -23,7 +23,10 @@ def diccionario():
     return df
 
 def preprocess_string(s):
-    return s.lower().strip()
+    if isinstance(s, str):
+        return s.lower().strip()
+    else:
+        return ''
 
 def fill_data(df):
     selected_columns = [
@@ -182,7 +185,7 @@ def add_dropdown(ws, col_letter, options):
     dv.add(f"{col_letter}2:{col_letter}{ws.max_row}")
 
 def generateExcel():
-    carpeta = ruta_user+'/Casos/'
+    carpeta = ruta_user+'Casos/'
     datos_a_obtener = {
         "Name of the Petitioning Organization": 1,
         "In Care Of Name (if any) last": 1,

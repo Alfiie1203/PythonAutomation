@@ -6,10 +6,16 @@ import pandas as pd
 
 output_folder = 'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/247/pdfs_generados'
 
-# Crear el directorio si no existe
+# Create folder if not exist
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
+''' 
+Load the images
+Scale the images like A4 page
+Add images
+Adjust text size
+'''
 def add_text_to_image(canvas_obj, image_path, text_data):
     # Cargar la imagen
     img = utils.ImageReader(image_path)
@@ -38,15 +44,24 @@ def add_text_to_image(canvas_obj, image_path, text_data):
         # Agregar texto al lienzo en la posición especificada
         canvas_obj.drawString(text_x, text_y, text)
 
+
+# Converts the zip code to a string with spaces between the digits
 def addSpaces(varSpaces):
-    # Convierte el código postal en una cadena con espacios entre los dígitos
     return ' '.join(varSpaces)
 
-def convert_date_format(date_str):
-    # Convertir el formato de fecha de 'YYYY-DD-MM HH:MM:SS' a 'DDMMYYYY'
+# Convert the date format from 'YYYY-DD-MM HH:MM:SS' to 'DDMMYYYY'
+def convert_date_format(date_str): 
     date_obj = pd.to_datetime(date_str)
     return date_obj.strftime('%d%m%Y')
 
+'''
+Read the excel file
+Temporarily rename problematic columns
+Create the JSON of the text data
+Add text and image to each page
+Move the row from Temp to Log
+Save changes to the Excel file
+'''
 def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
     # Leer el archivo Excel
     xls = pd.ExcelFile(excel_file)

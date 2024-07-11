@@ -1,98 +1,34 @@
-import os
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import utils
-from reportlab.pdfgen import canvas
-import pandas as pd
-import openpyxl
-import threading
-import time
-from openpyxl.styles import PatternFill
-import win32com.client as win32
-from Bot_i129s import generate_ExcelKey
-
+import os # Importa el módulo os para trabajar con funciones del sistema operativo
+from reportlab.lib.pagesizes import letter # Importa el tamaño de página letter de reportlab
+from reportlab.lib import utils # Importa utilidades de reportlab
+from reportlab.pdfgen import canvas # Importa canvas para generar PDFs
+import pandas as pd # Importa pandas para manipulación de datos
+import openpyxl # Importa openpyxl para trabajar con archivos Excel
+import threading # Importa threading para trabajar con hilos
+import time # Importa time para funciones de tiempo
+from openpyxl.styles import PatternFill # Importa PatternFill para estilos en celdas de Excel
+import win32com.client as win32 # Importa win32com para automatización de aplicaciones COM (como Excel)
+from Bot_i129s import generate_ExcelKey # Importa la función generate_ExcelKey del módulo Bot_i129s
+from ToolBook import utils
+# Variables globales para controlar el estado del bot
 bot_running = False
 bot_thread = None
 
+# Rutas base para archivos y carpetas
 ruta_base_user = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/FORM i129S/USERS/'
 ruta_base = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/FORM i129S/BOT - DO NOT TOUCH/'
 templates = ruta_base+'templates/'
 
 output_folder = ruta_base_user+'pdfs_generados'
 
-# Crear el directorio si no existe
+# Crear el directorio de salida si no existe
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
-    
-
-def adjust_text_and_font_size(text, threshold_small=24, threshold_large=50, 
-                              small_font_size=10, medium_font_size=12, super_large_font_size=6.8):
-    if len(text) > threshold_large:
-        midpoint = (len(text) // 2) + ((len(text) // 2) // 2)
-        text = text[:midpoint] + '\n' + text[midpoint:]
-        return text, super_large_font_size, +5
-    elif len(text) > threshold_small:
-        return text, small_font_size, +1
-    else:
-        return text, medium_font_size, 0
-     
-def color_cells(workbook, sheet_name):
-    ws = workbook[sheet_name]
-    red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-
-    for col in ws.iter_cols(min_row=2, max_row=ws.max_row):
-        for cell in col:
-            if cell.row > 1 and not cell.value:  # Verifica si la celda está vacía
-                cell.fill = red_fill
-                
-def add_text_to_image(canvas_obj, image_path, text_data):
-    # Cargar la imagen
-    img = utils.ImageReader(image_path)
-    img_width, img_height = img.getSize()
-
-    # Escalar la imagen para que quepa en la página
-    scaling_factor = min(letter[0] / img_width, letter[1] / img_height)
-    img_width *= scaling_factor
-    img_height *= scaling_factor
-
-    # Calcular la posición para centrar la imagen en la página
-    x_pos = (letter[0] - img_width) / 2
-    y_pos = (letter[1] - img_height) / 2
-
-    # Agregar la imagen al lienzo
-    canvas_obj.drawImage(image_path, x_pos, y_pos, width=img_width, height=img_height)
-
-    for text_entry in text_data:
-        text = text_entry['text']
-        text_x = text_entry['x']
-        text_y = text_entry['y']            
-        
-        # Ajustar el tamaño del texto y manejar saltos de línea dinámicamente
-        if text_entry.get('is_add_spaces'):
-            font_size = 12
-        else:
-            adjusted_text, font_size, y_adjustment = adjust_text_and_font_size(text)
-            text_y += y_adjustment
-        
-        canvas_obj.setFont("Courier", font_size)
-        
-        # Agregar texto al lienzo en la posición especificada, manejando saltos de línea
-        for line in text.split('\n'):
-            canvas_obj.drawString(text_x, text_y, line)
-            text_y -= font_size + 2  # Ajustar la posición y el espaciado entre líneas
-
-def addSpaces(varSpaces):
-    # Convierte el código postal en una cadena con espacios entre los dígitos
-    return ' '.join(varSpaces)
-
-def convert_date_format(date_str):
-    # Convertir el formato de fecha de 'YYYY-DD-MM HH:MM:SS' a 'DDMMYYYY'
-    if pd.isna(date_str) or date_str == '':
-        return ''
-    else: 
-        date_obj = pd.to_datetime(date_str)
-        return date_obj.strftime('%d/%m/%Y')
 
 def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
+    """
+    Genera PDFs a partir de datos en un archivo Excel.
+    """
     # Leer el archivo Excel
     xls = pd.ExcelFile(excel_file)
     data_temp = pd.read_excel(xls, 'Temp')
@@ -180,8 +116,8 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
             #{"text": str(row['h2_10']), "x": 91, "y": 577},
             #{"text": str(row['h2_1a']), "x": 65, "y": 577},
             #{"text": str(row['h2_1b']), "x": 91, "y": 577},
-            {"text": convert_date_format(str(row['startdate_proposed_employment'])), "x": 212, "y": 414},
-            {"text": convert_date_format(str(row['enddate_proposed_employment'])), "x": 212, "y": 389},
+            {"text": utils.convert_date_format(str(row['startdate_proposed_employment'])), "x": 212, "y": 414},
+            {"text": utils.convert_date_format(str(row['enddate_proposed_employment'])), "x": 212, "y": 389},
             #{"text": str(row['h2_3']), "x": 91, "y": 577},
             {"text": str(row['Family Name (Last Name)']), "x": 406, "y": 432},
             {"text": str(row['Given Name (First Name)']), "x": 406, "y": 408},
@@ -218,14 +154,14 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
             {"text": str(row['PostalCode_Beneficiary']), "x": 127, "y": 516},	
             {"text": str(row['Country_Beneficiary']), "x": 61, "y": 480},
             	
-            {"text": str(convert_date_format(row['Date of Birth'])), "x": 494, "y": 701},	
+            {"text": str(utils.convert_date_format(row['Date of Birth'])), "x": 494, "y": 701},	
             #{"text": str(row['h3_10']), "x": 91, "y": 577},	 
             {"text": str(row['City of birth']), "x": 344, "y": 640},	
             {"text": str(row['State of birth']), "x": 344, "y": 605},	
             {"text": str(row['Country of birth']), "x": 344, "y": 570},	
             {"text": str(row['Country of Citizenship or Nationality']), "x": 344, "y": 534},
             
-            {"text": addSpaces(str(row['Number for the Blanket'])), "x": 391, "y": 432, "is_add_spaces": True},
+            {"text": utils.addSpaces(str(row['Number for the Blanket'])), "x": 391, "y": 432, "is_add_spaces": True},
             {"text": str(row['U.S. Street address']), "x": 411, "y": 348},
             {"text": str(row['City_Petitioner']), "x": 411, "y": 300},
             {"text": str(row['State_Petitioner']), "x": 370, "y": 275},
@@ -265,7 +201,7 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
             
         texto_data_hoja5 = [
             {"text": str(row['Job Title_Act']), "x": 61, "y": 552},
-            {"text": convert_date_format(str(row['Start Date'])), "x": 211, "y": 527},
+            {"text": utils.convert_date_format(str(row['Start Date'])), "x": 211, "y": 527},
             {"text": str(row['Wages Earned Per Year']), "x": 193, "y": 408},
             {"text": str(row['Hours Worked Per Week']), "x": 193, "y": 383}, #hoja 1
             #Condicionar
@@ -295,28 +231,28 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
         
         
              
-        add_text_to_image(c, image_paths[0], texto_data_hoja1)
+        utils.add_text_to_image(c, image_paths[0], texto_data_hoja1)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[1], texto_data_hoja2)
+        utils.add_text_to_image(c, image_paths[1], texto_data_hoja2)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[2], texto_data_hoja3)
+        utils.add_text_to_image(c, image_paths[2], texto_data_hoja3)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[3], texto_data_hoja4)
+        utils.add_text_to_image(c, image_paths[3], texto_data_hoja4)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[4], texto_data_hoja5)
+        utils.add_text_to_image(c, image_paths[4], texto_data_hoja5)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[5], texto_data_hoja6)
+        utils.add_text_to_image(c, image_paths[5], texto_data_hoja6)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[6], texto_data_hoja7)
+        utils.add_text_to_image(c, image_paths[6], texto_data_hoja7)
         c.showPage()  # Añadir nueva página para la siguiente imagen
         
-        add_text_to_image(c, image_paths[7], texto_data_hoja8)
+        utils.add_text_to_image(c, image_paths[7], texto_data_hoja8)
         c.showPage()  # Añadir nueva página para la siguiente imagen
 
         # Guardar el PDF
@@ -333,13 +269,15 @@ def generate_pdfs_from_excel(excel_file, image_paths, output_folder):
         
     # Colorear las celdas vacías en la hoja "Temp"
     workbook = openpyxl.load_workbook(excel_file)
-    color_cells(workbook, 'Temp')
+    utils.color_cells(workbook, 'Temp')
     workbook.save(excel_file)
         
 def process_files():
-    global bot_running
-    while bot_running:
+    global bot_running # Indica que usaremos la variable global bot_running
+    while bot_running: # Bucle que se ejecuta mientras el bot esté activo
+        # Ruta del archivo Excel de entrada
         excel_file = ruta_base+'INPUT USERS DATA FORM I-129S.xlsx'
+        # Rutas de las imágenes de las plantillas de las páginas del PDF
         image_paths = [templates+'page_1.jpg', 
                        templates+'page_2.jpg',
                        templates+'page_3.jpg',
@@ -349,24 +287,28 @@ def process_files():
                        templates+'page_7.jpg',
                        templates+'page_8.jpg']
         
+        # Genera la clave de Excel necesaria para el procesamiento
         generate_ExcelKey.generateExcelKey()
+        # Genera los PDFs a partir del archivo Excel y las imágenes de las plantillas
         generate_pdfs_from_excel(excel_file, image_paths, output_folder)
-        time.sleep(300)  # Esperar 1 minuto antes de volver a comprobar
+        # Espera 5 minutos (300 segundos) antes de volver a comprobar
+        time.sleep(300)
 
 def start_bot():
-    global bot_running, bot_thread
-    if not bot_running:
-        bot_running = True
+    global bot_running, bot_thread  # Indica que usaremos las variables globales bot_running y bot_thread
+    if not bot_running:  # Si el bot no está corriendo actualmente
+        bot_running = True  # Marca el bot como corriendo
+        # Crea y empieza un nuevo hilo que ejecuta la función process_files
         bot_thread = threading.Thread(target=process_files)
         bot_thread.start()
 
 def stop_bot():
-    global bot_running, bot_thread
-    if bot_running:
-        bot_running = False
-        if bot_thread:
-            bot_thread.join()
-            bot_thread = None
+    global bot_running, bot_thread  # Indica que usaremos las variables globales bot_running y bot_thread
+    if bot_running:  # Si el bot está corriendo actualmente
+        bot_running = False  # Marca el bot como no corriendo
+        if bot_thread:  # Si hay un hilo de bot activo
+            bot_thread.join()  # Espera a que el hilo termine
+            bot_thread = None  # Resetea la variable del hilo
 
 #excel_file = ruta_base+'INPUT USERS DATA FORM I-129S.xlsx'
 #image_paths = ['G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_1.jpg', 
@@ -379,3 +321,5 @@ def stop_bot():
 #               'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_8.jpg']
 #
 #generate_pdfs_from_excel(excel_file, image_paths, output_folder)
+
+
