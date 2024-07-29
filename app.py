@@ -25,7 +25,7 @@ def start_bot247():
     try:
         bot247_excel_file = TAX_247+'datos.xlsx'
         bot247_image_paths = [
-            TAX_Templates+'page_1.png', 
+            TAX_Templates+'page_1.png',
             TAX_Templates+'page_2.png'
         ]
         bot247_output_folder = TAX_247+'pdfs_generados'

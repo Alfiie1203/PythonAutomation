@@ -28,10 +28,10 @@ def pdf_to_images(pdf_path, output_folder, dpi=300):
     pdf_document.close()
 
 # Ruta del archivo PDF de entrada (ruta completa)
-input_pdf = "G:\\Shared drives\\ES VIALTO GMS - RPA\\TAX\\COMPLIANCE\\i_129s\\Templates\\i-129s.pdf"
+input_pdf = "G:\\Shared drives\\ES VIALTO GMS - RPA\\PythonAutomation\\Bot_G028i\\Templates\\g-28i.pdf"
 
 # Carpeta de salida para las imágenes
-output_folder = "G:\\Shared drives\\ES VIALTO GMS - RPA\\TAX\\COMPLIANCE\\i_129s\\Templates"
+output_folder = "G:\\Shared drives\\ES VIALTO GMS - RPA\\PythonAutomation\\Bot_G028i\\Templates"
 
 # Llama a la función para convertir el PDF en imágenes con una resolución de 600 dpi
 pdf_to_images(input_pdf, output_folder, dpi=600)

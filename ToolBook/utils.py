@@ -11,8 +11,8 @@ import win32com.client as win32 # Importa win32com para automatización de aplic
 from Bot_i129s import generate_ExcelKey # Importa la función generate_ExcelKey del módulo Bot_i129s
 
 
-def adjust_text_and_font_size(text, threshold_small=24, threshold_large=50, 
-                              small_font_size=10, medium_font_size=12, super_large_font_size=6.8):
+def adjust_text_and_font_size(text, threshold_small=18, threshold_large=50, threshold_medium = 24,
+                              small_font_size=9, medium_font_size=11, super_large_font_size=6.8, normaly_font_size=12):
     """
     Ajusta el texto y el tamaño de la fuente basado en la longitud del texto.
     """
@@ -20,10 +20,12 @@ def adjust_text_and_font_size(text, threshold_small=24, threshold_large=50,
         midpoint = (len(text) // 2) + ((len(text) // 2) // 2)
         text = text[:midpoint] + '\n' + text[midpoint:]
         return text, super_large_font_size, 5
-    elif len(text) > threshold_small:
+    elif len(text) > threshold_small and len(text) < threshold_medium:
+        return text, medium_font_size, 1
+    elif len(text) > threshold_medium:
         return text, small_font_size, 1
     else:
-        return text, medium_font_size, 0
+        return text, normaly_font_size, 0
 
     
 def add_text_to_image(canvas_obj, image_path, text_data):

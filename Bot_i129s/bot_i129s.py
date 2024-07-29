@@ -9,6 +9,7 @@ import time # Importa time para funciones de tiempo
 from openpyxl.styles import PatternFill # Importa PatternFill para estilos en celdas de Excel
 import win32com.client as win32 # Importa win32com para automatización de aplicaciones COM (como Excel)
 from Bot_i129s import generate_ExcelKey # Importa la función generate_ExcelKey del módulo Bot_i129s
+from Bot_G028i import bot_g028i
 from ToolBook import utils
 # Variables globales para controlar el estado del bot
 bot_running = False
@@ -292,6 +293,24 @@ def process_files():
         # Genera los PDFs a partir del archivo Excel y las imágenes de las plantillas
         generate_pdfs_from_excel(excel_file, image_paths, output_folder)
         # Espera 5 minutos (300 segundos) antes de volver a comprobar
+        
+        # Rutas base para archivos y carpetas
+        g28_ruta_base_user = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/Model G28i/'
+        g28_ruta_base_template = 'G:/Shared drives/ES VIALTO GMS - RPA/PythonAutomation/Bot_G028i/Templates/'
+        g28_ruta_base = 'G:/Shared drives/ES VIALTO GMS - RPA/INMI & SS/FORM i129S/BOT - DO NOT TOUCH/'
+        g28_output_folder = g28_ruta_base_user+'pdfs_generados'
+        # Variables de entrada
+        excel_file = g28_ruta_base+'INPUT USERS DATA FORM I-129S.xlsx'
+        attorney_file = g28_ruta_base_template+'attorney_info.xlsx'
+        image_paths = [
+            g28_ruta_base_template+'page_1.jpg', 
+            g28_ruta_base_template+'page_2.jpg',
+            g28_ruta_base_template+'page_3.jpg',
+            g28_ruta_base_template+'page_4.jpg'
+        ]
+
+        # Ejecutar la función para generar PDFs
+        bot_g028i.g28_generate_pdfs_from_excel(excel_file, attorney_file, image_paths, g28_output_folder)
         time.sleep(300)
 
 def start_bot():
@@ -321,5 +340,3 @@ def stop_bot():
 #               'G:/Shared drives/ES VIALTO GMS - RPA/TAX/COMPLIANCE/i_129s/templates/page_8.jpg']
 #
 #generate_pdfs_from_excel(excel_file, image_paths, output_folder)
-
-
